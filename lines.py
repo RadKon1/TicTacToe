@@ -56,6 +56,8 @@ class Lines:
                         x3 - (x2 + self.settings.lines_width),
                         y3 - (y2 + self.settings.lines_width)),  # prawy-dolny
         ]
+        
+        self.squares_active = {i: False for i, square in enumerate(self.squares)}
 
 
     def draw_lines(self):

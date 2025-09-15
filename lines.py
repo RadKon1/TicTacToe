@@ -58,7 +58,7 @@ class Lines:
         ]
         
         self.squares_active = {i: False for i, square in enumerate(self.squares)}
-
+        self.who_won_dict = {i: None for i, square in enumerate(self.squares)}
 
     def draw_lines(self):
         """Drawing the lines on the screen."""
@@ -66,3 +66,7 @@ class Lines:
         pygame.draw.rect(self.screen, self.color, self.rect_bottom)
         pygame.draw.rect(self.screen, self.color, self.rect_left)
         pygame.draw.rect(self.screen, self.color, self.rect_right)
+
+    def draw_endgame_line(self, first_num, last_num):
+        """Drawing the line when 3 of the same in a row/line"""
+        pygame.draw.line(self.screen, self.color,self.squares[first_num].center, self.squares[last_num].center, self.settings.endgame_line_width)

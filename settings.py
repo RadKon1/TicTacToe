@@ -20,4 +20,5 @@ class Settings:
         self.color_cross = (255, 0, 0)
         self.cross_width = 5
         self.cross_height = 10
-
+        #Endgame line
+        self.endgame_line_width = 8

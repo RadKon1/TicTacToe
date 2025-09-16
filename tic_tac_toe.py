@@ -56,23 +56,12 @@ class TicTacToe:
             for i, square in enumerate(self.lines.squares):
                 if square.collidepoint(mouse_pos):
                     if self.lines.squares_active[i] == False:
-                        new_circle = Circle(self)
-                        new_circle.circle_center = square.center
-                        self.circles.add(new_circle)
-                        self.turn_circle = False
-                        self.lines.squares_active[i] = True
-                        self.lines.who_won_dict[i] = "Circle"
+                        self._create_circle(i, square)
         else:
             for i, square in enumerate(self.lines.squares):
                 if square.collidepoint(mouse_pos):
                     if self.lines.squares_active[i] == False:
-                        new_cross = Cross(self)
-                        new_cross.start_x = square.center[0] - 40
-                        new_cross.start_y = square.center[1] - 40
-                        self.crosses.add(new_cross)
-                        self.turn_circle = True
-                        self.lines.squares_active[i] = True
-                        self.lines.who_won_dict[i] = "Cross"
+                        self._create_cross(i, square)
 
     def _check_play_button(self, mouse_pos):
         """Checking if the 'GAME' button has been pressed and reacting."""
@@ -118,6 +107,25 @@ class TicTacToe:
                     self.game_signs.prep_side_wins_str('RED', (255, 0, 0))
                 break
 
+    def _create_circle(self, numb, list):
+        """Creating a new circle as well as changing values of the dictionaries."""
+        new_circle = Circle(self)
+        new_circle.circle_center = list.center
+        self.circles.add(new_circle)
+        self.turn_circle = False
+        self.lines.squares_active[numb] = True
+        self.lines.who_won_dict[numb] = "Circle"
+
+    def _create_cross(self, numb, list):
+        """Creating a new cross as well as changing values of the dictionaries."""
+        new_cross = Cross(self)
+        new_cross.start_x = list.center[0] - 40
+        new_cross.start_y = list.center[1] - 40
+        self.crosses.add(new_cross)
+        self.turn_circle = True
+        self.lines.squares_active[numb] = True
+        self.lines.who_won_dict[numb] = "Cross"
+
     def _update_screen(self):
         """Funtion responsible for refreshing the screen"""
         self.screen.fill((255,255,255))
@@ -130,7 +138,15 @@ class TicTacToe:
         for cross in self.crosses:
             cross.draw_cross(cross.start_x, cross.start_y)
 
-        if self.game_active == False:
+        if self.game_active:
+            if self.turn_circle:
+                self.game_signs.prep_whose_turn('Circle', (0, 0, 255))
+                self.game_signs.draw_whose_turn()
+            else:
+                self.game_signs.prep_whose_turn('Cross', (255, 0, 0))
+                self.game_signs.draw_whose_turn()
+
+        if not self.game_active:
             self.lines.draw_endgame_line(self.winning_numbers[0], self.winning_numbers[2])
             self.game_signs.draw_signs()
 

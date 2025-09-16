@@ -3,10 +3,13 @@ import sys
 import pygame
 
 from settings import Settings
+
 from lines import Lines
 from circle import Circle
 from cross import Cross
+
 from tiles import Tiles
+from game_signs import GameSigns
 from game_stats import GameStats
 
 class TicTacToe:
@@ -17,15 +20,21 @@ class TicTacToe:
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.clock = pygame.time.Clock()
+
         self.game_stats = GameStats()
         self.lines = Lines(self)
+
         self.tiles = Tiles(self)
+        self.game_signs = GameSigns(self)
 
         self.circles = pygame.sprite.Group()
         self.crosses = pygame.sprite.Group()
+
         self.turn_circle = True
         self.game_active = True
+
         self.winning_numbers = []
+
     def run_game(self):
         """Główna pętla gry."""
         while True:
@@ -65,6 +74,15 @@ class TicTacToe:
                         self.lines.squares_active[i] = True
                         self.lines.who_won_dict[i] = "Cross"
 
+    def _check_play_button(self, mouse_pos):
+        """Checking if the 'GAME' button has been pressed and reacting."""
+        button_clicked = self.game_signs.game_str_rect.collidepoint(mouse_pos)
+        if button_clicked and not self.game_active:
+            self.circles.empty()
+            self.crosses.empty()
+            self.lines._reset_dict()
+            self.game_active = True
+
     def _check_events(self):
         """Function responsible for all the events."""
         for event in pygame.event.get():
@@ -73,6 +91,8 @@ class TicTacToe:
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
                 if self.game_active:
                     self._mouse_button_press()
 
@@ -91,9 +111,11 @@ class TicTacToe:
                 if self.lines.who_won_dict[a] == 'Circle':
                     self.game_stats.p1_score += 1
                     self.tiles.prep_number_p1()
+                    self.game_signs.prep_side_wins_str('BLUE', (0, 0, 255))
                 else:
                     self.game_stats.p2_score += 1
                     self.tiles.prep_number_p2()
+                    self.game_signs.prep_side_wins_str('RED', (255, 0, 0))
                 break
 
     def _update_screen(self):
@@ -101,13 +123,17 @@ class TicTacToe:
         self.screen.fill((255,255,255))
         self.lines.draw_lines()
         self.tiles.draw_tiles()
+
         for circle in self.circles:
             circle.draw_circle(circle.circle_center)
 
         for cross in self.crosses:
             cross.draw_cross(cross.start_x, cross.start_y)
-        if  not self.game_active:
+
+        if self.game_active == False:
             self.lines.draw_endgame_line(self.winning_numbers[0], self.winning_numbers[2])
+            self.game_signs.draw_signs()
+
         pygame.display.flip()
 
 

@@ -87,5 +87,9 @@ class Lines:
 
         return getattr(self.squares[first_num], pos_attribute)
 
+    def _reset_dict(self):
+        """Resets the squares active and who won dictionaries."""
+        self.squares_active = {i: False for i, square in enumerate(self.squares)}
+        self.who_won_dict = {i: None for i, square in enumerate(self.squares)}
 
 

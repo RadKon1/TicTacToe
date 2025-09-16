@@ -71,50 +71,21 @@ class Lines:
         """Drawing the line when 3 of the same in a row/line"""
         pygame.draw.line(self.screen, self.color,self._check_number_to_draw(first_num, last_num), self._check_number_to_draw(last_num, first_num), self.settings.endgame_line_width)
 
-    def _check_number_to_draw(self, num_check, num_position):
-        """Chcecking which square it"""
-        if num_check == 0:
-            if num_position == 8:
-                return self.squares[num_check].topleft
-            elif num_position == 6:
-                return self.squares[num_check].midtop
-            elif num_position == 2:
-                return self.squares[num_check].midleft
-        elif num_check == 1:
-            return self.squares[num_check].midtop
-        elif num_check == 2:
-            if num_position == 0:
-                return self.squares[num_check].midright
-            elif num_position == 6:
-                return self.squares[num_check].topright
-            elif num_position == 8:
-                return self.squares[num_check].midtop
-        elif num_check == 3:
-            return self.squares[num_check].midleft
-        elif num_check == 4:
-            return self.squares[num_check].center
-        elif num_check == 5:
-            return self.squares[num_check].midright
-        elif num_check == 6:
-            if num_position == 0:
-                return self.squares[num_check].midbottom
-            elif num_position == 2:
-                return self.squares[num_check].bottomleft
-            elif num_position == 8:
-                return self.squares[num_check].midleft
-        elif num_check == 7:
-            return self.squares[num_check].midbottom
-        elif num_check == 8:
-            if num_position == 0:
-                return self.squares[num_check].bottomright
-            elif num_position == 6:
-                return self.squares[num_check].midright
-            elif num_position == 2:
-                return self.squares[num_check].midbottom
+    def _check_number_to_draw(self, first_num, last_num):
+        positions_map = {
+        0 : {8 : 'topleft', 6 : 'midtop', 2 : 'midleft'},
+        1 : {None : 'midtop'},
+        2 : {0 : 'midright', 6 : 'topright', 8 : 'midtop'},
+        3 : {None : 'midleft'},
+        4 : {None : 'center'},
+        5 : {None : 'midright'},
+        6 : {0 : 'midbottom', 2 : 'bottomleft', 8 : 'midleft'},
+        7 : {None : 'midbottom'},
+        8 : {6 : 'midright', 0 : 'bottomright', 2: 'midbottom'}
+        }
+        pos_attribute = positions_map[first_num].get(last_num, positions_map[first_num].get(None))
 
-
-
-
+        return getattr(self.squares[first_num], pos_attribute)
 
 
 

@@ -7,6 +7,7 @@ from lines import Lines
 from circle import Circle
 from cross import Cross
 from tiles import Tiles
+from game_stats import GameStats
 
 class TicTacToe:
     """Główna klasa gry zajmująca się jej zasobami."""
@@ -16,9 +17,10 @@ class TicTacToe:
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.clock = pygame.time.Clock()
-
+        self.game_stats = GameStats()
         self.lines = Lines(self)
         self.tiles = Tiles(self)
+
         self.circles = pygame.sprite.Group()
         self.crosses = pygame.sprite.Group()
         self.turn_circle = True
@@ -28,7 +30,9 @@ class TicTacToe:
         """Główna pętla gry."""
         while True:
             self._check_events()
-            self._check_game_logic()
+            if self.game_active:
+                self._check_game_logic()
+
             self._update_screen()
             self.clock.tick(60)
     def _check_keydown_events(self, event):
@@ -73,31 +77,24 @@ class TicTacToe:
                     self._mouse_button_press()
 
     def _check_game_logic(self):
-        """Function checks whether the game is over or not."""
-        if self.lines.who_won_dict[0] == self.lines.who_won_dict[3] == self.lines.who_won_dict[6] == "Circle" or self.lines.who_won_dict[0] == self.lines.who_won_dict[3] == self.lines.who_won_dict[6] == "Cross":
-            self.game_active = False
-            self.winning_numbers = [0, 6]
-        elif self.lines.who_won_dict[1] == self.lines.who_won_dict[4] == self.lines.who_won_dict[7] == "Circle" or self.lines.who_won_dict[1] == self.lines.who_won_dict[4] == self.lines.who_won_dict[7] == "Cross":
-            self.game_active = False
-            self.winning_numbers = [1, 7]
-        elif self.lines.who_won_dict[2] == self.lines.who_won_dict[5] == self.lines.who_won_dict[8] == "Circle" or self.lines.who_won_dict[2] == self.lines.who_won_dict[5] == self.lines.who_won_dict[8] == "Cross":
-            self.game_active = False
-            self.winning_numbers = [2, 8]
-        elif self.lines.who_won_dict[0] == self.lines.who_won_dict[1] == self.lines.who_won_dict[2] == "Circle" or self.lines.who_won_dict[0] == self.lines.who_won_dict[1] == self.lines.who_won_dict[2] == "Cross":
-            self.game_active = False
-            self.winning_numbers = [0, 2]
-        elif self.lines.who_won_dict[3] == self.lines.who_won_dict[4] == self.lines.who_won_dict[5] == "Circle" or self.lines.who_won_dict[3] == self.lines.who_won_dict[4] == self.lines.who_won_dict[5] == "Cross":
-            self.game_active = False
-            self.winning_numbers = [3, 5]
-        elif self.lines.who_won_dict[6] == self.lines.who_won_dict[7] == self.lines.who_won_dict[8] == "Circle" or self.lines.who_won_dict[6] == self.lines.who_won_dict[7] == self.lines.who_won_dict[8] == "Cross":
-            self.game_active = False
-            self.winning_numbers = [6, 8]
-        elif self.lines.who_won_dict[0] == self.lines.who_won_dict[4] == self.lines.who_won_dict[8] == "Circle" or self.lines.who_won_dict[0] == self.lines.who_won_dict[4] == self.lines.who_won_dict[8] == "Cross":
-            self.game_active = False
-            self.winning_numbers = [0, 8]
-        elif self.lines.who_won_dict[2] == self.lines.who_won_dict[4] == self.lines.who_won_dict[6] == "Circle" or self.lines.who_won_dict[2] == self.lines.who_won_dict[4] == self.lines.who_won_dict[6] == "Cross":
-            self.game_active = False
-            self.winning_numbers = [2, 6]
+        """Checking if the game is over and mark winning cells."""
+        winning_combinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ]
+        for combo in winning_combinations:
+            a, b, c = combo
+            if self.lines.who_won_dict[a] == self.lines.who_won_dict[b] == self.lines.who_won_dict[c] and self.lines.who_won_dict[a] in ['Circle', 'Cross']:
+                self.game_active = False
+                self.winning_numbers = combo
+                if self.lines.who_won_dict[a] == 'Circle':
+                    self.game_stats.p1_score += 1
+                    self.tiles.prep_number_p1()
+                else:
+                    self.game_stats.p2_score += 1
+                    self.tiles.prep_number_p2()
+                break
 
     def _update_screen(self):
         """Funtion responsible for refreshing the screen"""
@@ -109,8 +106,8 @@ class TicTacToe:
 
         for cross in self.crosses:
             cross.draw_cross(cross.start_x, cross.start_y)
-        if self.game_active == False:
-            self.lines.draw_endgame_line(self.winning_numbers[0], self.winning_numbers[1])
+        if  not self.game_active:
+            self.lines.draw_endgame_line(self.winning_numbers[0], self.winning_numbers[2])
         pygame.display.flip()
 
 

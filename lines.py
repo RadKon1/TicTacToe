@@ -69,4 +69,32 @@ class Lines:
 
     def draw_endgame_line(self, first_num, last_num):
         """Drawing the line when 3 of the same in a row/line"""
-        pygame.draw.line(self.screen, self.color,self.squares[first_num].center, self.squares[last_num].center, self.settings.endgame_line_width)
+        pygame.draw.line(self.screen, self.color,self._check_number_to_draw(first_num), self._check_number_to_draw(last_num), self.settings.endgame_line_width)
+
+    def _check_number_to_draw(self, num_check):
+        """Chcecking which square it"""
+        if num_check == 0:
+            return self.squares[num_check].topleft
+        elif num_check == 1:
+            return self.squares[num_check].midtop
+        elif num_check == 2:
+            return self.squares[num_check].topright
+        elif num_check == 3:
+            return self.squares[num_check].midleft
+        elif num_check == 4:
+            return self.squares[num_check].center
+        elif num_check == 5:
+            return self.squares[num_check].midright
+        elif num_check == 6:
+            return self.squares[num_check].bottomleft
+        elif num_check == 7:
+            return self.squares[num_check].midbottom
+        elif num_check == 8:
+            return self.squares[num_check].bottomright
+
+
+
+
+
+
+

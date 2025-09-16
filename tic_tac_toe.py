@@ -6,6 +6,7 @@ from settings import Settings
 from lines import Lines
 from circle import Circle
 from cross import Cross
+from tiles import Tiles
 
 class TicTacToe:
     """Główna klasa gry zajmująca się jej zasobami."""
@@ -17,6 +18,7 @@ class TicTacToe:
         self.clock = pygame.time.Clock()
 
         self.lines = Lines(self)
+        self.tiles = Tiles(self)
         self.circles = pygame.sprite.Group()
         self.crosses = pygame.sprite.Group()
         self.turn_circle = True
@@ -101,6 +103,7 @@ class TicTacToe:
         """Funtion responsible for refreshing the screen"""
         self.screen.fill((255,255,255))
         self.lines.draw_lines()
+        self.tiles.draw_tiles()
         for circle in self.circles:
             circle.draw_circle(circle.circle_center)
 

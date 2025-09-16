@@ -32,6 +32,7 @@ class TicTacToe:
 
         self.turn_circle = True
         self.game_active = True
+        self.draw = False
 
         self.winning_numbers = []
 
@@ -71,6 +72,7 @@ class TicTacToe:
             self.crosses.empty()
             self.lines._reset_dict()
             self.game_active = True
+            self.draw = False
 
     def _check_events(self):
         """Function responsible for all the events."""
@@ -106,6 +108,9 @@ class TicTacToe:
                     self.tiles.prep_number_p2()
                     self.game_signs.prep_side_wins_str('RED', (255, 0, 0))
                 break
+            elif (len(self.circles) + len(self.crosses)) == 9:
+                self.game_active = False
+                self.draw = True
 
     def _create_circle(self, numb, list):
         """Creating a new circle as well as changing values of the dictionaries."""
@@ -145,8 +150,10 @@ class TicTacToe:
             else:
                 self.game_signs.prep_whose_turn('Cross', (255, 0, 0))
                 self.game_signs.draw_whose_turn()
+        if not self.game_active and self.draw:
+            self.game_signs.draw_draw()
 
-        if not self.game_active:
+        elif not self.game_active:
             self.lines.draw_endgame_line(self.winning_numbers[0], self.winning_numbers[2])
             self.game_signs.draw_signs()
 

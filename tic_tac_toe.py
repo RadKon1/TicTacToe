@@ -108,9 +108,9 @@ class TicTacToe:
                     self.tiles.prep_number_p2()
                     self.game_signs.prep_side_wins_str('RED', (255, 0, 0))
                 break
-            elif (len(self.circles) + len(self.crosses)) == 9:
-                self.game_active = False
+            elif self.game_active and (len(self.circles) + len(self.crosses)) == 9:
                 self.draw = True
+                self.game_active = False
 
     def _create_circle(self, numb, list):
         """Creating a new circle as well as changing values of the dictionaries."""
